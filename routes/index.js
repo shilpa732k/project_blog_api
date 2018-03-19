@@ -1,6 +1,7 @@
 var express = require('express')
 var router = express.Router()
 var User = require('../lib/User')
+var Article = require('../lib/Article')
 
 
 
@@ -72,5 +73,22 @@ router.delete('/listuser/:id',function(req, res) {
     })
     .catch(err => next(err))
 }) 
+
+router.post('/writeArticle', function(req,res){
+    var title = req.body.title
+    var description = req.body.description
+    var author = req.body.author
+
+    var newArticle = new Article()
+        newArticle.title = title
+        newArticle.description = description
+        newArticle.author = author
+        newArticle.save(function(err, SavedArticle){
+            if(err){
+                return res.send(err)
+            }
+            return res.status(200).send()
+        })
+})
 
 module.exports = router
