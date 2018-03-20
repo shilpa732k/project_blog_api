@@ -1,0 +1,21 @@
+extends layout
+
+block content
+  a(href='/login') Login
+  h1 User Sign up
+  form(method='POST', action='/register')
+    #form-group
+      label Username:
+      input.form-control(name='username', type ='text')
+    #form-group
+      label Password:
+      input.form-control(name='password', type ='password')
+    #form-group
+      label Firstname:
+      input.form-control(name='firstname', type ='text')
+    #form-group
+      label Lastname:
+      input.form-control(name='lastname', type ='text')
+    br
+    input.btn.btn-primary(type='submit', value='Submit')
+     

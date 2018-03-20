@@ -8,7 +8,13 @@ var Article = require('../lib/Article')
 router.get('/',function(req,res,next) {
     res.render('index')
 })
+router.get('/login',function(req,res,next) {
+    res.render('login')
+})
 
+router.get('/listuser/:id',function(req,res,next) {
+    res.render('create_article')
+})
 
 
 router.post('/login', function(req,res) {
@@ -18,13 +24,13 @@ router.post('/login', function(req,res) {
     User.findOne({username: username, password: password}, function(err, user) {
         if(err) {
             console.log(err)
-            return res.status(500).send()
+            return res.status(500).send('Incorrect user and password')
         }
         if(!user) {
-            return res.status(404).send()
+            return res.status(404).send('Not a Valid user')
         }
         req.session.user = user
-        return res.status(200).send()
+        return res.status(200).render('create_article')
     })
             
             })
@@ -52,7 +58,8 @@ router.post('/register',function(req,res) {
             return res.status(500).send()
         }
         
-        return res.status(200).send()
+        return res.status(200).send('Sign UP sucess')
+        
     })
 })
 
@@ -73,6 +80,7 @@ router.delete('/listuser/:id',function(req, res) {
     })
     .catch(err => next(err))
 }) 
+
 
 router.post('/writeArticle', function(req,res){
     var title = req.body.title
