@@ -112,7 +112,6 @@ router.get('/listUser',function(req,res) {
 
 router.post('/editProfile/:id', function(req, res){
     let user = {};
-    user.password = req.body.password;
     user.firstname = req.body.firstname;
     user.lastname = req.body.lastname;
   
