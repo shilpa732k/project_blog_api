@@ -17,6 +17,43 @@ router.get('/listuser/:id',function(req,res,next) {
 })
 
 
+router.get('/editArticle1/:id',function(req,res,next) {
+    Article.findById(req.params.id, function(err, article){
+       /*if(article.author != req.user._id){
+          req.flash('danger', 'Not Authorized');
+          res.redirect('/');
+       }*/
+        if(err){
+            return res.send(err)
+            next()
+        }
+        res.render('edit_article', {
+            title:'Edit Article',
+            article:article
+        })
+    })
+    /*if(err){
+        return res.send(err)
+        next()
+    }
+    res.json(article)*/
+})
+
+router.get('/editProfile1/:id',function(req,res,next) {
+    User.findById(req.params.id, function(err, user){
+        if(err){
+            return res.send(err)
+            next()
+        }
+        res.render('edit_profile', {
+            title:'Edit Profile',
+            user:user
+        })
+    })
+})
+
+
+
 router.post('/login', function(req,res) {
     var username = req.body.username
     var password = req.body.password
@@ -33,7 +70,7 @@ router.post('/login', function(req,res) {
         return res.status(200).render('create_article')
     })
             
-            })
+})
 
 router.get('/dashboard', function(req, res) {
     if(!req.session.user) {
@@ -66,12 +103,31 @@ router.post('/register',function(req,res) {
 router.get('/listUser',function(req,res) {
     User.find({}, function (err, users){
         if(err){
-            res.send('something went really wrong!!');
-            next();
+            res.send('something went really wrong!!')
+            next()
         }
-        res.json(users);
-    });
+        res.json(users)
+    })
 })
+
+router.post('/editProfile/:id', function(req, res){
+    let user = {};
+    user.password = req.body.password;
+    user.firstname = req.body.firstname;
+    user.lastname = req.body.lastname;
+  
+    let query = {_id:req.params.id}
+  
+    User.update(query, user, function(err){
+      if(err){
+        console.log(err);
+        return;
+      } else {
+        //req.flash('success', 'Article Updated');
+        res.status(200).send('success,User Updated')
+      }
+    })
+  })
 
 router.delete('/listuser/:id',function(req, res) {
     User.findByIdAndRemove(req.params.id).exec().then(doc =>{
@@ -98,5 +154,34 @@ router.post('/writeArticle', function(req,res){
             return res.status(200).send()
         })
 })
+
+router.get('/listArticles',function(req,res) {
+    Article.find({}, function (err, articles){
+        if(err){
+            res.send(err);
+            next();
+        }
+        res.json(articles);
+    });
+})
+
+router.post('/editArticle/:id', function(req, res){
+    let article = {};
+    article.title = req.body.title;
+    //Article.author = req.body.author;
+    article.description = req.body.description;
+  
+    let query = {_id:req.params.id}
+  
+    Article.update(query, article, function(err){
+      if(err){
+        console.log(err);
+        return;
+      } else {
+        //req.flash('success', 'Article Updated');
+        res.status(200).send('success,Article Updated')
+      }
+    })
+  })
 
 module.exports = router
