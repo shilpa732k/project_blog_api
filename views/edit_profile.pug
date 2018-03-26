@@ -1,0 +1,13 @@
+extends layout
+
+block content
+  h1 #{title}
+  form(method='POST', action='/editProfile/'+user._id)
+    #form-group
+      label firstName:
+      input.form-control(name='firstname', type='text', value=user.firstname)
+    #form-group
+      label lastName:
+      input.form-control(name='lastname', type='text', value=user.lastname)
+    br
+    input.btn.btn-primary(type='submit',value='Submit')
