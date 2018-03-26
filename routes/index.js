@@ -3,9 +3,16 @@ var router = express.Router()
 var User = require('../lib/User')
 var Article = require('../lib/Article')
 
-
-
 router.get('/',function(req,res,next) {
+    Article.find({}, function(err, Article) {
+        res.render('articles_list', {
+            title: 'Articles',
+            Article: Article
+        })
+    })
+})
+
+router.get('/signup',function(req,res,next) {
     res.render('index')
 })
 router.get('/login',function(req,res,next) {
@@ -14,6 +21,12 @@ router.get('/login',function(req,res,next) {
 
 router.get('/listuser/:id',function(req,res,next) {
     res.render('create_article')
+})
+
+router.get('/writeArticle',function(req,res,next) {
+    res.render('add_article', {
+        title:"Add article"
+    })
 })
 
 
@@ -95,7 +108,7 @@ router.post('/writeArticle', function(req,res){
             if(err){
                 return res.send(err)
             }
-            return res.status(200).send()
+            return res.status(200).send('Article written succesfully' + author)
         })
 })
 
