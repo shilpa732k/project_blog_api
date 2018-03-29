@@ -5,4 +5,10 @@ block content
   ul
   each article, i in Article
     li=article.title
-  
+  br
+  h1 Search Article by Username
+  form(method='POST', action='/article._id')
+    #form-group
+      label Username:
+      input.form-control(name='username', type ='text')
+    input.btn.btn-primary(type='submit', value='Submit')

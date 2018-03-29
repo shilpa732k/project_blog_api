@@ -196,4 +196,31 @@ router.post('/editArticle/:id', function(req, res){
     })
   })
 
+  router.get('/:id', function(req, res){
+    Article.findById(req.params.id, function(err, article){
+      //User.findById(article.author, function(err, user){
+        res.render('perticular_article', {
+          article:article,
+          //author: user.name
+        })
+      })
+    })
+  //})
+
+  router.delete('/deletearticle/:id', function(req, res){
+    ArticlefindByIdAndRemove(req.params.id).exec().then(doc =>{
+        if(!doc) {return res.status(404).end()}
+        return res.status(204).send('Deleted article successfully')
+    })
+    .catch(err => next(err)) 
+    /*.findById(req.params.id, function(err, article){
+        article.remove(function(err){
+          if(err){
+            console.log(err);
+          }
+          res.status(200).send('Article Deleted successfully');
+        });
+    });*/
+});
+    
 module.exports = router
