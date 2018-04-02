@@ -19,9 +19,9 @@ router.get('/login',function(req,res,next) {
     res.render('login')
 })
 
-router.get('/listuser/:id',function(req,res,next) {
+/*router.get('/listuser/:id',function(req,res,next) {
     res.render('create_article')
-})
+})*/
 
 router.get('/writeArticle',function(req,res,next) {
     res.render('add_article', {
@@ -208,19 +208,14 @@ router.post('/editArticle/:id', function(req, res){
   //})
 
   router.delete('/deletearticle/:id', function(req, res){
-    ArticlefindByIdAndRemove(req.params.id).exec().then(doc =>{
-        if(!doc) {return res.status(404).end()}
-        return res.status(204).send('Deleted article successfully')
-    })
-    .catch(err => next(err)) 
-    /*.findById(req.params.id, function(err, article){
+    Article.findById(req.params.id, function(err, article){
         article.remove(function(err){
           if(err){
             console.log(err);
           }
           res.status(200).send('Article Deleted successfully');
         });
-    });*/
+    });  
 });
     
 module.exports = router
