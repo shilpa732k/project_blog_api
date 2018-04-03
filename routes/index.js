@@ -200,7 +200,7 @@ router.post('/editArticle/:id', function(req, res){
   router.get('/singleArticle/:id', function(req, res){
     Article.findById(req.params.id, function(err, article){
       //User.findById(article.author, function(err, user){
-        res.render('perticular_article', {
+        res.render('particular_article', {
           article:article,
           //author: user.name
         })
@@ -222,11 +222,7 @@ router.post('/editArticle/:id', function(req, res){
 router.post('/filterbyauthor', function(req,res){
     var author = req.body.username
 
-    var newArticle = new Article()
-        newArticle.title = title
-        newArticle.description = description
-        newArticle.author = author
-        newArticle.save(function(err, SavedArticle){
+    Article.(function(err, SavedArticle){
             if(err){
                 return res.send(err)
             }
