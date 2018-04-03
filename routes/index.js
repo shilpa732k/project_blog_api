@@ -19,9 +19,9 @@ router.get('/login',function(req,res,next) {
     res.render('login')
 })
 
-/*router.get('/listuser/:id',function(req,res,next) {
+router.get('/listuser/:id',function(req,res,next) {
     res.render('create_article')
-})*/
+})
 
 router.get('/writeArticle',function(req,res,next) {
     res.render('add_article', {
@@ -196,7 +196,8 @@ router.post('/editArticle/:id', function(req, res){
     })
   })
 
-  router.get('/:id', function(req, res){
+  //onclick of hyperlink of article this should route
+  router.get('/singleArticle/:id', function(req, res){
     Article.findById(req.params.id, function(err, article){
       //User.findById(article.author, function(err, user){
         res.render('perticular_article', {
@@ -213,9 +214,23 @@ router.post('/editArticle/:id', function(req, res){
           if(err){
             console.log(err);
           }
-          res.status(200).send('Article Deleted successfully');
+          res.status(200).render('deleted_article');
         });
     });  
 });
-    
+
+router.post('/filterbyauthor', function(req,res){
+    var author = req.body.username
+
+    var newArticle = new Article()
+        newArticle.title = title
+        newArticle.description = description
+        newArticle.author = author
+        newArticle.save(function(err, SavedArticle){
+            if(err){
+                return res.send(err)
+            }
+            return res.status(200).send('Article written succesfully' + author)
+        })
+})
 module.exports = router
