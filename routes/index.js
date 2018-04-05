@@ -2,6 +2,7 @@ var express = require('express')
 var router = express.Router()
 var User = require('../lib/User')
 var Article = require('../lib/Article')
+var Comments = require('../lib/Comments')
 
 router.get('/',function(req,res,next) {
     Article.find({}, function(err, Article) {
@@ -123,16 +124,25 @@ router.get('/listUser',function(req,res) {
     })
 })
 
+router.get('/listUsers',function(req,res,next) {
+    User.find({}, function(err, User) {
+        res.render('user_list', {
+            title: 'Users',
+            User:User
+        })
+    })
+})
+
 router.post('/editProfile/:id', function(req, res){
-    let user = {};
-    user.firstname = req.body.firstname;
-    user.lastname = req.body.lastname;
+    let user = {}
+    user.firstname = req.body.firstname
+    user.lastname = req.body.lastname
   
     let query = {_id:req.params.id}
   
     User.update(query, user, function(err){
       if(err){
-        console.log(err);
+        console.log(err)
         return;
       } else {
         //req.flash('success', 'Article Updated');
@@ -170,25 +180,42 @@ router.post('/writeArticle', function(req,res){
 router.get('/listArticles',function(req,res) {
     Article.find({}, function (err, articles){
         if(err){
-            res.send(err);
-            next();
+            res.send(err)
+            next()
         }
-        res.json(articles);
+        res.json(articles)
     });
 })
 
+router.post('/commentArticle/:id', function(req,res){
+    var comment = req.body.comment
+    var user = req.session.user
+    var article = req.params.id
+    
+    var newComment = new Comments()
+    newComment.comment = comment
+    newComment.user = user
+    newComment.article = article
+    newComment.save(function(err, SavedComment){
+            if(err){
+                return res.send(err)
+            }
+            return res.status(200).send('comment written succesfully')
+        })
+})
+
 router.post('/editArticle/:id', function(req, res){
-    let article = {};
-    article.title = req.body.title;
+    let article = {}
+    article.title = req.body.title
     //Article.author = req.body.author;
-    article.description = req.body.description;
+    article.description = req.body.description
   
     let query = {_id:req.params.id}
   
     Article.update(query, article, function(err){
       if(err){
-        console.log(err);
-        return;
+        console.log(err)
+        return
       } else {
         //req.flash('success', 'Article Updated');
         res.status(200).send('success,Article Updated')
@@ -200,6 +227,9 @@ router.post('/editArticle/:id', function(req, res){
   router.get('/singleArticle/:id', function(req, res){
     Article.findById(req.params.id, function(err, article){
       //User.findById(article.author, function(err, user){
+        if(err){
+            return res.send(err)
+        }
         res.render('particular_article', {
           article:article,
           //author: user.name
@@ -212,21 +242,22 @@ router.post('/editArticle/:id', function(req, res){
     Article.findById(req.params.id, function(err, article){
         article.remove(function(err){
           if(err){
-            console.log(err);
+            console.log(err)
           }
-          res.status(200).render('deleted_article');
+          res.status(200).render('deleted_article')
         });
     });  
 });
 
-router.post('/filterbyauthor', function(req,res){
+/*router.get('/filterbyauthor', function(req,res){
     var author = req.body.username
-
-    Article.(function(err, SavedArticle){
-            if(err){
-                return res.send(err)
-            }
-            return res.status(200).send('Article written succesfully' + author)
-        })
+    Article.find({'author':author}, function(err, article){
+        if(err){
+            return res.send(err)
+        }
+          res.render('filtered_list', {
+            article:article, 
+  })
 })
+})*/
 module.exports = router

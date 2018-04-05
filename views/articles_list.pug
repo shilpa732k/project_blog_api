@@ -7,8 +7,9 @@ block content
     li=article.title
   br
   h1 Search Article by Username
-  form(method='POST', action='/article._id')
+  form(method='POST', action='/filterbyauthor')
     #form-group
       label Username:
       input.form-control(name='username', type ='text')
     input.btn.btn-primary(type='submit', value='Submit')
+  br

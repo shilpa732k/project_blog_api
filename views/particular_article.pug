@@ -6,5 +6,12 @@ block content
   p= article.description
   br
   a(href='/editArticle1/'+article._id) EDIT
-  br
   a.delete-article(href='/deletearticle/'+article._id) Delete
+  br
+  form(method='POST', action='/commentArticle/'+article._id)
+    #form-group
+      label Comment:
+      input.form-control(name='comment', type ='text')
+    input.btn.btn-primary(type='submit', value='Submit')
+    br
+    br
