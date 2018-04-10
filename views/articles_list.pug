@@ -4,7 +4,8 @@ block content
   h1 #{title}
   ul
   each article, i in Article
-    li=article.title
+    li.list-group-item
+      a(href="/singleArticle/"+article._id)= article.title
   br
   h1 Search Article by Username
   form(method='POST', action='/filterbyauthor')

@@ -6,6 +6,7 @@ block content
   p= article.description
   br
   a(href='/editArticle1/'+article._id) EDIT
+  br
   a.delete-article(href='/deletearticle/'+article._id) Delete
   br
   form(method='POST', action='/commentArticle/'+article._id)
