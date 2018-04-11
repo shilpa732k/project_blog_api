@@ -4,15 +4,6 @@ var User = require('../lib/User')
 var Article = require('../lib/Article')
 var Comments = require('../lib/Comments')
 
-router.get('/',function(req,res,next) {
-    Article.find({}, function(err, Article) {
-        res.render('articles_list', {
-            title: 'Articles',
-            Article: Article
-        })
-    })
-})
-
 router.get('/signup',function(req,res,next) {
     res.render('index')
 })
@@ -24,10 +15,13 @@ router.get('/listuser/:id',function(req,res,next) {
     res.render('create_article')
 })
 
-router.get('/writeArticle',function(req,res,next) {
+router.get('/writeArticle/:id',function(req,res,next) {
+    User.findById(req.params.id, function(err,user){
     res.render('add_article', {
-        title:"Add article"
+        title:"Add article",
+        username:user.username
     })
+})
 })
 
 
@@ -81,7 +75,10 @@ router.post('/login', function(req,res) {
             return res.status(404).send('Not a Valid user')
         }
         req.session.user = user
-        return res.status(200).render('create_article')
+        return res.status(200).render('create_article', {
+            title: 'WELCOME',
+            user: user
+        })
     })
             
 })
@@ -114,7 +111,7 @@ router.post('/register',function(req,res) {
     })
 })
 
-router.get('/listUser',function(req,res) {
+/*router.get('/listUser',function(req,res) {
     User.find({}, function (err, users){
         if(err){
             res.send('something went really wrong!!')
@@ -122,7 +119,7 @@ router.get('/listUser',function(req,res) {
         }
         res.json(users)
     })
-})
+})*/
 
 router.get('/listUsers',function(req,res,next) {
     User.find({}, function(err, User) {
@@ -160,10 +157,10 @@ router.delete('/listuser/:id',function(req, res) {
 }) 
 
 
-router.post('/writeArticle', function(req,res){
+router.post('/writeArticle/:username', function(req,res){
     var title = req.body.title
     var description = req.body.description
-    var author = req.body.author
+    var author = req.params.username
 
     var newArticle = new Article()
         newArticle.title = title
@@ -173,11 +170,11 @@ router.post('/writeArticle', function(req,res){
             if(err){
                 return res.send(err)
             }
-            return res.status(200).send('Article written succesfully' + author)
+            return res.status(200).send('Article written succesfully by ' + author)
         })
 })
 
-router.get('/listArticles',function(req,res) {
+/*router.get('/listArticles',function(req,res) {
     Article.find({}, function (err, articles){
         if(err){
             res.send(err)
@@ -185,11 +182,25 @@ router.get('/listArticles',function(req,res) {
         }
         res.json(articles)
     });
+})*/
+
+
+router.get('/listArticles1/:id',function(req,res,next) {
+    User.findById(req.params.id, function(err,user){
+    Article.find({}, function(err, Article) {
+        res.render('articles_list', {
+            title: 'Articles',
+            Article: Article,
+            user:user
+        })
+    })
+})
 })
 
-router.post('/commentArticle/:id', function(req,res){
+
+router.post('/commentArticle/:id/:id1', function(req,res){
     var comment = req.body.comment
-    var user = req.session.user
+    var user = req.params.id1
     var article = req.params.id
     
     var newComment = new Comments()
@@ -224,7 +235,8 @@ router.post('/editArticle/:id', function(req, res){
   })
 
   //onclick of hyperlink of article this should route
-  router.get('/singleArticle/:id', function(req, res){
+  router.get('/singleArticle/:id1/:id', function(req, res){
+    User.findById(req.params.id1, function(err,user){
     Article.findById(req.params.id, function(err, article){
       //User.findById(article.author, function(err, user){
         if(err){
@@ -232,9 +244,10 @@ router.post('/editArticle/:id', function(req, res){
         }
         res.render('particular_article', {
           article:article,
-          //author: user.name
+          user:user
         })
       })
+    })
     })
   //})
 
@@ -249,15 +262,15 @@ router.post('/editArticle/:id', function(req, res){
     });  
 });
 
-/*router.get('/filterbyauthor', function(req,res){
+router.get('/filterbyauthor', function(req,res){
     var author = req.body.username
     Article.find({'author':author}, function(err, article){
         if(err){
             return res.send(err)
         }
-          res.render('filtered_list', {
+          res.render('filtered_user_list', {
             article:article, 
   })
 })
-})*/
+})
 module.exports = router

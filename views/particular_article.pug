@@ -9,7 +9,8 @@ block content
   br
   a.delete-article(href='/deletearticle/'+article._id) Delete
   br
-  form(method='POST', action='/commentArticle/'+article._id)
+  br
+  form(method='POST', action='/commentArticle/'+article._id+'/'+user._id)
     #form-group
       label Comment:
       input.form-control(name='comment', type ='text')
