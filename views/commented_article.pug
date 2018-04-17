@@ -1,0 +1,12 @@
+extends layout
+
+block content
+  h1 #{title}
+  h5 Written by #{users.username} on #{articles.title}
+  p= SavedComment.comment
+  br
+  a(href='/editComment/'+SavedComment._id+'/'+articles._id) EDIT
+  br
+  a(href='/deleteComment/'+SavedComment._id+'/'+articles._id+'/'+users._id) Delete
+  br
+  a(href='/ListComments/'+articles._id+'/'+users._id) List all Comments on #{articles.title} article

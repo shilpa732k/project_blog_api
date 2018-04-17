@@ -9,11 +9,12 @@ block content
   br
   a.delete-article(href='/deletearticle/'+article._id) Delete
   br
+  a(href='/ListComments/'+article._id+'/'+user._id) List of comments for this Article
   br
   form(method='POST', action='/commentArticle/'+article._id+'/'+user._id)
     #form-group
       label Comment:
       input.form-control(name='comment', type ='text')
     input.btn.btn-primary(type='submit', value='Submit')
-    br
-    br
+  br
+  br

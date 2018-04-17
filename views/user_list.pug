@@ -4,4 +4,6 @@ block content
   h1 #{title}
   ul
   each user, i in User
-    li=user.username
+   li.list-group-item
+      a(href="/user_profile/"+user._id)= user.username
+   //--li=user.username

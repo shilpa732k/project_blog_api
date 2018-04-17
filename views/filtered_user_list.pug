@@ -1,7 +1,19 @@
 extends layout
 
 block content
-  h1 #{title}
+  h1 #{title} by #{author}
   ul
-  each article, i in article
-    li=article.title
+  each user, i in users
+   if(author==user.username)
+    h5 Below are Articles written by #{author}
+   else
+    h5 #{author} is not a user    
+  br  
+  ul
+  each user, i in users
+   each articles, i in article
+    if(author==articles.author)
+     if(author==user.username)
+      userId=user._id
+       li.list-group-item
+        a(href="/singleArticle/"+userId+'/'+articles._id)= articles.title

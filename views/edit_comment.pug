@@ -1,0 +1,10 @@
+extends layout
+
+block content
+  h1 comment of #{title}
+  form(method='POST', action='/editComment/'+comment._id)
+    #form-group
+      label Edit-Comment:
+      textarea.form-control(name='comment')= comment.comment
+    br
+    input.btn.btn-primary(type='submit',value='Submit')

@@ -40,11 +40,22 @@ router.get('/editArticle1/:id',function(req,res,next) {
             article:article
         })
     })
-    /*if(err){
-        return res.send(err)
-        next()
-    }
-    res.json(article)*/
+   
+})
+
+router.get('/editComment/:id/:id1',function(req,res,next) {
+    Comments.findById(req.params.id, function(err, comment){
+    Article.findById(req.params.id1, function(err, article){
+        if(err){
+            return res.send(err)
+            next()
+        }
+        res.render('edit_comment', {
+            title:article.title,
+            comment:comment
+        })
+    })
+}) 
 })
 
 router.get('/editProfile1/:id',function(req,res,next) {
@@ -148,10 +159,10 @@ router.post('/editProfile/:id', function(req, res){
     })
   })
 
-router.delete('/listuser/:id',function(req, res) {
+router.delete('/DeleteProfile/:id',function(req, res) {
     User.findByIdAndRemove(req.params.id).exec().then(doc =>{
         if(!doc) {return res.status(404).end()}
-        return res.status(204).end()
+        return res.status(200).send('deleted_comment')
     })
     .catch(err => next(err))
 }) 
@@ -197,8 +208,26 @@ router.get('/listArticles1/:id',function(req,res,next) {
 })
 })
 
+router.get('/ListComments/:id/:id1',function(req,res,next) {
+    Article.findById(req.params.id, function(err,article){
+        User.findById(req.params.id1, function(err,user){
+    Comments.find({}, function(err, comment) {
+        if (err){ return res.send(err)}
+        res.render('comment_list', {
+            title: 'Comments',
+            article: article,
+            comment:comment,
+            user:user
+        })
+    })
+})
+})
+})
+
 
 router.post('/commentArticle/:id/:id1', function(req,res){
+    User.findById(req.params.id1, function(err,users){
+        Article.findById(req.params.id, function(err, articles){
     var comment = req.body.comment
     var user = req.params.id1
     var article = req.params.id
@@ -211,9 +240,32 @@ router.post('/commentArticle/:id/:id1', function(req,res){
             if(err){
                 return res.send(err)
             }
-            return res.status(200).send('comment written succesfully')
-        })
+            res.render('commented_article',{
+                title:'Comments',
+                SavedComment:SavedComment,
+                users:users,
+                articles:articles                
+            })
+    })
 })
+})
+})
+
+router.post('/editComment/:id', function(req, res){
+    let comment = {}
+    comment.comment = req.body.comment
+  
+    let query = {_id:req.params.id}
+  
+    Article.update(query, comment, function(err){
+      if(err){
+        console.log(err)
+        return
+      } else {
+        res.status(200).send('success,Comment Updated')
+      }
+    })
+  })
 
 router.post('/editArticle/:id', function(req, res){
     let article = {}
@@ -244,12 +296,27 @@ router.post('/editArticle/:id', function(req, res){
         }
         res.render('particular_article', {
           article:article,
-          user:user
+          user:user,
         })
       })
     })
     })
   //})
+ 
+  router.get('/user_profile/:id', function(req, res){
+    User.findById(req.params.id, function(err,user){
+        Article.find({}, function(err, article) {
+        if(err){
+            return res.send(err)
+        }
+        res.render('users_profile', {
+          title:'Articles',
+          article:article,
+          user:user,
+        })
+      })
+    })
+    })
 
   router.delete('/deletearticle/:id', function(req, res){
     Article.findById(req.params.id, function(err, article){
@@ -257,20 +324,40 @@ router.post('/editArticle/:id', function(req, res){
           if(err){
             console.log(err)
           }
-          res.status(200).render('deleted_article')
-        });
-    });  
-});
+          res.status(200).send('deleted_article')
+        })
+    }) 
+})
+
+router.delete('/deleteComment/:id/:id1/:id2', function(req, res){
+    Comments.findById(req.params.id, function(err, comment){
+        Article.findById(req.params.id1, function(err, article){
+            User.findById(req.params.id2, function(err,user){
+                comment.remove(function(err){
+          if(err){
+            console.log(err)
+          }
+          res.status(200).send('deleted_comment')
+        })
+    }) 
+})
+    })
+})
 
 router.get('/filterbyauthor', function(req,res){
     var author = req.body.username
-    Article.find({'author':author}, function(err, article){
+    User.find({}, function(err, users){
+    Article.find({}, function(err, article){
         if(err){
             return res.send(err)
         }
           res.render('filtered_user_list', {
-            article:article, 
+            title:"Articles",
+            article:article,
+            users:users, 
+            author:author
   })
+})
 })
 })
 module.exports = router
