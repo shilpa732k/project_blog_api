@@ -5,5 +5,5 @@ block content
   ul
   each user, i in User
    li.list-group-item
-      a(href="/user_profile/"+user._id)= user.username
+      a(href="/user_profile/"+user._id+'/'+loggedInUsed._id)= user.username
    //--li=user.username

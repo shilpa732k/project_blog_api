@@ -5,10 +5,10 @@ block content
   ul
   each article, i in Article
     li.list-group-item
-      a(href="/singleArticle/"+user._id+"/"+article._id)= article.title
+      a(href="/singleArticle/"+loggedInUser._id+"/"+article._id)= article.title
   br
   h1 Search Article by Username
-  form(method='GET', action='/filterbyauthor')
+  form(method='POST', action='/filterbyauthor/'+loggedInUser._id)
     #form-group
       label Username:
       input.form-control(name='username', type ='text')

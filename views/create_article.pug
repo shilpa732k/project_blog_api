@@ -4,11 +4,9 @@ block content
   h1= user.username 
   h1 #{title} 
   br
-  a(href='/writeArticle/'+user._id) add article
-  br
   a(href='/listArticles1/'+user._id) List all Articles
   br
-  a(href='/listUsers') List all Users
+  a(href='/listUsers/'+user._id) List all Users
   br
   br
   br
@@ -33,7 +31,22 @@ block content
   br
   br
   br
+  br
+  br
+  br
+  br
+  br
+  br
+  br
+  br
+  br
+  br
+  a(href='/writeArticle/'+user._id) Add Article
+  br
+  a(href='/myArticles/'+user._id) View My Articles
   br
   a(href='/editProfile1/'+user._id) Edit My Profile
   br
   a(href='/DeleteProfile/'+user._id) Delete My Blog Account
+  br
+  a(href='/logout') LOGOUT

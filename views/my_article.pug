@@ -1,9 +1,9 @@
 extends layout
 
 block content
-  h1 #{title} by #{user.username}
+  h1 #{title} by #{loggedInUsed.username}
   ul
   each articles, i in article
-   if(articles.author==user.username)
+   if(articles.author==loggedInUsed.username)
     li.list-group-item
       a(href="/singleArticle/"+loggedInUsed._id+'/'+articles._id)= articles.title

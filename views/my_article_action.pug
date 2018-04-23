@@ -5,11 +5,9 @@ block content
   h5 Written by #{article.author}
   p= article.description
   br
-  h6 Below are your comments:
-  ul
-  each comments, i in comment
-   if new String(comments.article[0]).valueOf()==article._id && new String(comments.user[0]).valueOf()==loggedInUser._id
-    li=comments.comment
+  a(href='/editArticle1/'+article._id) EDIT
+  br
+  a.delete-article(href='/deletearticle/'+article._id) Delete
   br
   a(href='/ListComments/'+article._id+'/'+loggedInUser._id) List of comments for this Article
   br

@@ -3,7 +3,8 @@ extends layout
 block content
   h1 #{title}
   h5 #{article._id}
+  br
   ul
   each comments, i in comment
-   if(comments.article[i]==article._id)
+   if new String(comments.article[0]).valueOf()==article._id
     li=comments.comment

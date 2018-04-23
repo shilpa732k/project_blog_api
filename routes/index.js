@@ -96,7 +96,7 @@ router.post('/login', function(req,res) {
 
 router.get('/dashboard', function(req, res) {
     if(!req.session.user) {
-       return res.status(401).send()
+       return res.status(401).send("pls login by /login url")
        }
     return res.status(200).send("welcome to session login")
 })
@@ -132,11 +132,14 @@ router.post('/register',function(req,res) {
     })
 })*/
 
-router.get('/listUsers',function(req,res,next) {
+router.get('/listUsers/:id',function(req,res,next) {
+    User.findById(req.params.id, function(err,loggedInUsed){
     User.find({}, function(err, User) {
         res.render('user_list', {
             title: 'Users',
-            User:User
+            User:User,
+            loggedInUsed:loggedInUsed
+        })
         })
     })
 })
@@ -159,10 +162,10 @@ router.post('/editProfile/:id', function(req, res){
     })
   })
 
-router.delete('/DeleteProfile/:id',function(req, res) {
+router.get('/DeleteProfile/:id',function(req, res) {
     User.findByIdAndRemove(req.params.id).exec().then(doc =>{
         if(!doc) {return res.status(404).end()}
-        return res.status(200).send('deleted_comment')
+        return res.status(200).send('deleted your account')
     })
     .catch(err => next(err))
 }) 
@@ -197,12 +200,12 @@ router.post('/writeArticle/:username', function(req,res){
 
 
 router.get('/listArticles1/:id',function(req,res,next) {
-    User.findById(req.params.id, function(err,user){
+    User.findById(req.params.id, function(err,loggedInUser){
     Article.find({}, function(err, Article) {
         res.render('articles_list', {
             title: 'Articles',
             Article: Article,
-            user:user
+            loggedInUser:loggedInUser
         })
     })
 })
@@ -218,6 +221,7 @@ router.get('/ListComments/:id/:id1',function(req,res,next) {
             article: article,
             comment:comment,
             user:user
+           //article_id:JSON.stringify(comment.article[0])
         })
     })
 })
@@ -236,6 +240,9 @@ router.post('/commentArticle/:id/:id1', function(req,res){
     newComment.comment = comment
     newComment.user = user
     newComment.article = article
+
+    console.log(article)
+    //var comment = JSON.stringify(newComment)
     newComment.save(function(err, SavedComment){
             if(err){
                 return res.send(err)
@@ -288,23 +295,49 @@ router.post('/editArticle/:id', function(req, res){
 
   //onclick of hyperlink of article this should route
   router.get('/singleArticle/:id1/:id', function(req, res){
-    User.findById(req.params.id1, function(err,user){
+    User.findById(req.params.id1, function(err,loggedInUser){
     Article.findById(req.params.id, function(err, article){
-      //User.findById(article.author, function(err, user){
+    Comments.find({}, function(err, comment) {
         if(err){
             return res.send(err)
         }
-        res.render('particular_article', {
+        if(article.author!=loggedInUser.username){
+            res.render('particular_article', {
+                article:article,
+                loggedInUser:loggedInUser,
+                comment:comment
+              })
+            }
+        else{
+        res.render('my_article_action', {
           article:article,
-          user:user,
+          loggedInUser:loggedInUser,
+          comment:comment         
         })
+        }
       })
     })
     })
-  //})
+  })
  
-  router.get('/user_profile/:id', function(req, res){
+  router.get('/myArticles/:id1', function(req, res){
+     User.findById(req.params.id1, function(err,loggedInUsed){
+        Article.find({}, function(err, article) {
+        if(err){
+            return res.send(err)
+        }
+        res.render('my_article', {
+          title:'Articles',
+          article:article,
+          loggedInUsed:loggedInUsed
+        })
+        })
+      })
+    })
+
+  router.get('/user_profile/:id/:id1', function(req, res){
     User.findById(req.params.id, function(err,user){
+     User.findById(req.params.id1, function(err,loggedInUsed){
         Article.find({}, function(err, article) {
         if(err){
             return res.send(err)
@@ -313,13 +346,17 @@ router.post('/editArticle/:id', function(req, res){
           title:'Articles',
           article:article,
           user:user,
+          loggedInUsed:loggedInUsed
+        })
         })
       })
     })
     })
 
-  router.delete('/deletearticle/:id', function(req, res){
+  router.get('/deletearticle/:id', function(req, res){
     Article.findById(req.params.id, function(err, article){
+        //console.log(req.params.id)
+        //res.send(article)
         article.remove(function(err){
           if(err){
             console.log(err)
@@ -329,7 +366,7 @@ router.post('/editArticle/:id', function(req, res){
     }) 
 })
 
-router.delete('/deleteComment/:id/:id1/:id2', function(req, res){
+router.get('/deleteComment/:id/:id1/:id2', function(req, res){
     Comments.findById(req.params.id, function(err, comment){
         Article.findById(req.params.id1, function(err, article){
             User.findById(req.params.id2, function(err,user){
@@ -344,20 +381,40 @@ router.delete('/deleteComment/:id/:id1/:id2', function(req, res){
     })
 })
 
-router.get('/filterbyauthor', function(req,res){
-    var author = req.body.username
+router.get('/filteredbyauthor1/:username/:id',function(req,res,next) {
+    var author = req.params.username
+    User.findById(req.params.id, function(err,loggedInUsed){
     User.find({}, function(err, users){
-    Article.find({}, function(err, article){
+        /*for( var i=0;i<users.length;i++){
+            if(users.username==author){
+                var userID = users._id
+            }
+        }*/
+    Article.find({}, function(err, article){  
         if(err){
             return res.send(err)
         }
-          res.render('filtered_user_list', {
-            title:"Articles",
+        res.render('filtered_user_list', {
+            title:'Articles',
             article:article,
-            users:users, 
-            author:author
+            users:users,
+            author:author,
+            loggedInUsed:loggedInUsed
+          })
+    })
+})
+})
+})
+
+router.post('/filterbyauthor/:id', function(req,res){
+    User.findById(req.params.id, function(err,loggedInUsed){
+          res.redirect('/filteredbyauthor1/'+req.body.username+'/'+loggedInUsed._id)
+    })
   })
-})
-})
-})
+
+  router.get('/logout', function(req, res){
+    req.logout();
+    req.flash('success', 'You are logged out')
+    res.redirect('/login')
+  })
 module.exports = router
