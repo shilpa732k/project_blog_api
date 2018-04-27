@@ -2,6 +2,7 @@ extends layout
 
 block content
   h1 #{title} by #{user.username}
+  h5 #{user.firstname} #{user.lastname}
   ul
   each articles, i in article
    if(articles.author==user.username)

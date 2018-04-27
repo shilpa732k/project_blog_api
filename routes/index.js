@@ -1,4 +1,5 @@
 var express = require('express')
+var paginate = require('express-paginate')
 var router = express.Router()
 var User = require('../lib/User')
 var Article = require('../lib/Article')
@@ -132,7 +133,45 @@ router.post('/register',function(req,res) {
     })
 })*/
 
-router.get('/listUsers/:id',function(req,res,next) {
+// keep this before all routes that will use pagination 
+router.use(paginate.middleware(3, 50))
+router.get('/listUsers/:id', function(req, res, next) {
+    User.findById(req.params.id, function(err,loggedInUser){
+   
+    // 
+    // This example assumes you've previously defined `Users` 
+    // as `var Users = db.model('Users')` if you are using `mongoose` 
+    // and that you've added the Mongoose plugin `mongoose-paginate` 
+    // to the Users model via `User.plugin(require('mongoose-paginate'))`
+    //Users.find({}, function(err, User) { 
+        User.paginate({}, { page: req.query.page, limit: req.query.limit }, function(err, users) {
+                       
+      if (err) return next(err);
+   console.log(users)
+      res.format({
+        html: function() {
+          res.render('user', {
+            loggedInUser:loggedInUser,
+            users: users.docs,
+            pageCount: users.pages,
+            itemCount: users.limit,
+            pages: paginate.getArrayPages(req)(3, users.pages, req.query.page)
+          })
+        }
+        /*json: function() {
+          // inspired by Stripe's API response for list objects 
+          res.json({
+            object: 'list',
+            has_more: paginate.hasNextPages(req)(users.pages),
+            data: users
+          })
+        }*/
+      })
+   
+    })
+  })
+  })
+/*router.get('/listUsers/:id',function(req,res,next) {
     User.findById(req.params.id, function(err,loggedInUsed){
     User.find({}, function(err, User) {
         res.render('user_list', {
@@ -140,6 +179,28 @@ router.get('/listUsers/:id',function(req,res,next) {
             User:User,
             loggedInUsed:loggedInUsed
         })
+        })
+    })
+})*/
+
+router.get('/listArticles1/:id',function(req,res,next) {
+    User.findById(req.params.id, function(err,loggedInUser){
+        Article.paginate({}, { page: req.query.page, limit: req.query.limit }, function(err, Article) {
+                     
+            if (err) return next(err);
+         console.log(Article)
+            res.format({
+              html: function() {
+                res.render('article', {
+                  title: 'Articles',
+                  loggedInUser:loggedInUser,
+                  Article: Article.docs,
+                  pageCount: Article.pages,
+                  itemCount: Article.limit,
+                  pages: paginate.getArrayPages(req)(3, Article.pages, req.query.page)
+                })
+              }
+            })
         })
     })
 })
@@ -199,7 +260,7 @@ router.post('/writeArticle/:username', function(req,res){
 })*/
 
 
-router.get('/listArticles1/:id',function(req,res,next) {
+/*router.get('/listArticles1/:id',function(req,res,next) {
     User.findById(req.params.id, function(err,loggedInUser){
     Article.find({}, function(err, Article) {
         res.render('articles_list', {
@@ -209,7 +270,7 @@ router.get('/listArticles1/:id',function(req,res,next) {
         })
     })
 })
-})
+})*/
 
 router.get('/ListComments/:id/:id1',function(req,res,next) {
     Article.findById(req.params.id, function(err,article){

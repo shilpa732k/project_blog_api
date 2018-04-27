@@ -1,0 +1,26 @@
+//- users.pug
+ 
+h1 #{title}
+ 
+//- this will simply generate a link to sort by name
+//- note how we only have to pass the querystring param
+//- that we want to modify here, not the entire querystring
+//-a(href=paginate.href({ sort: 'name' })) Sort by name
+ 
+//- this assumes you have `?age=1` or `?age=-1` in the querystring
+//- so this will basically negate the value and give you
+//- the opposite sorting order (desc with -1 or asc with 1)
+//-a(href=paginate.href({ sort: req.query.age === '1' ? -1 : 1 })) Sort by age
+ 
+ul
+  each article, i in Article
+    li.list-group-item
+      a(href="/singleArticle/"+loggedInUser._id+"/"+article._id)= article.title
+include paginate
+  br
+  h1 Search Article by Username
+  form(method='POST', action='/filterbyauthor/'+loggedInUser._id)
+    #form-group
+      label Username:
+      input.form-control(name='username', type ='text')
+    input.btn.btn-primary(type='submit', value='Submit')
