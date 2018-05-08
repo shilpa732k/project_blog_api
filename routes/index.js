@@ -86,7 +86,6 @@ router.post('/login', function(req,res) {
         if(!user) {
             return res.status(404).send('Not a Valid user')
         }
-        req.session.user = user
         return res.status(200).render('create_article', {
             title: 'WELCOME',
             user: user
@@ -95,12 +94,7 @@ router.post('/login', function(req,res) {
             
 })
 
-router.get('/dashboard', function(req, res) {
-    if(!req.session.user) {
-       return res.status(401).send("pls login by /login url")
-       }
-    return res.status(200).send("welcome to session login")
-})
+
 router.post('/register',function(req,res) {
     var username = req.body.username
     var password = req.body.password
@@ -276,17 +270,18 @@ router.get('/ListComments/:id/:id1',function(req,res,next) {
     Article.findById(req.params.id, function(err,article){
         User.findById(req.params.id1, function(err,user){
     Comments.find({}, function(err, comment) {
+        User.findById(req.params.commentedUser, function(err,commenteUser){
         if (err){ return res.send(err)}
         res.render('comment_list', {
             title: 'Comments',
             article: article,
             comment:comment,
             user:user
-           //article_id:JSON.stringify(comment.article[0])
         })
     })
 })
 })
+    })
 })
 
 
@@ -310,6 +305,7 @@ router.post('/commentArticle/:id/:id1', function(req,res){
             }
             res.render('commented_article',{
                 title:'Comments',
+                commentedUser:newComment.user,
                 SavedComment:SavedComment,
                 users:users,
                 articles:articles                
@@ -474,8 +470,6 @@ router.post('/filterbyauthor/:id', function(req,res){
   })
 
   router.get('/logout', function(req, res){
-    req.logout();
-    req.flash('success', 'You are logged out')
     res.redirect('/login')
   })
 module.exports = router
