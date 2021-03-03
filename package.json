@@ -22,7 +22,7 @@
     "mongoose-paginate": "^5.0.3",
     "morgan": "1.9.0",
     "path": "0.12.7",
-    "pug": "^2.0.1",
+    "pug": "^3.0.1",
     "serve-favicon": "2.4.5"
   }
 }
